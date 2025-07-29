@@ -4,6 +4,18 @@ import os
 import json
 import requests
 
+# Jstudio key has been implemented
+key = None
+with open("key.txt", "r") as k:
+    key = k.read().strip()
+
+headers = {
+    'jstudio-key' : key
+}
+
+weather_url = "https://api.joshlei.com/v2/growagarden/weather"
+stock_url = "https://api.joshlei.com/v2/growagarden/stock"
+
 # Log file names
 LOG_FILE = "events.log"
 ITEM_LOG = "item.log"
@@ -16,7 +28,7 @@ weather_events = []
 
 def update_weather():
     try:
-        data = requests.get("https://api.joshlei.com/v2/growagarden/weather")
+        data = requests.get(weather_url, headers=headers)
         data.raise_for_status()
     except requests.exceptions.RequestException as e:
         print(e)
@@ -31,7 +43,7 @@ def update_shops(last_update_data,last_update_time):
     if last_update_time != datetime.datetime.now().strftime("%H:%M"):
         while True:
             try:
-                r = requests.get("https://api.joshlei.com/v2/growagarden/stock")
+                r = requests.get(stock_url, headers=headers)
                 r.raise_for_status()
             except requests.exceptions.RequestException as e:
                 print(e)
